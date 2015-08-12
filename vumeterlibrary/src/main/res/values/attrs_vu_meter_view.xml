@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="VuMeterView">
+        <attr name="backgroundColor" format="color"/>
+    </declare-styleable>
+</resources>
