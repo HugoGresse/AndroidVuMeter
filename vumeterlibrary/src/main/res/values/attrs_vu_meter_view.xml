@@ -1,5 +1,7 @@
 <resources>
     <declare-styleable name="VuMeterView">
         <attr name="backgroundColor" format="color"/>
+        <attr name="blockNumber" format="integer"/>
+        <attr name="blockSpacing" format="integer"/>
     </declare-styleable>
 </resources>
