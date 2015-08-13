@@ -31,6 +31,8 @@ Usage
 
 See [DemoApp](https://github.com/HugoGresse/AndroidVuMeter/blob/master/app/src/main/java/io/gresse/hugo/vumeter/MainActivity.java) for complete usage example.
 
+See [wiki](https://github.com/HugoGresse/AndroidVuMeter/wiki) for the available methods. 
+
 Download
 --------
 
