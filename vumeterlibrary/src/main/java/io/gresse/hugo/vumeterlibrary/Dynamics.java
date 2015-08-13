@@ -38,6 +38,11 @@ public class Dynamics {
         mIsToTarget = false;
     }
 
+    public void setPosition(float position) {
+        mPosition = position;
+        mIsToTarget = true;
+    }
+
     public void update() {
         if(mIsToTarget){
             return;
@@ -46,11 +51,13 @@ public class Dynamics {
         if(mTargetPosition > mPosition){
             mPosition += mStep;
             if(mPosition >= mTargetPosition){
+                mPosition = mTargetPosition;
                 mIsToTarget = true;
             }
         } else {
             mPosition -= mStep;
             if(mPosition <= mTargetPosition){
+                mPosition = mTargetPosition;
                 mIsToTarget = true;
             }
         }

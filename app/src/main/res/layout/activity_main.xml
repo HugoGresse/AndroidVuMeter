@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:vumeter="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -15,9 +15,43 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:paddingBottom="40dp"
-        app:speed="10"
-        app:blockNumber="5"
-        app:blockSpacing="20dp"
-        app:backgroundColor="#33b5e5"/>
+        android:id="@+id/vumeter"
+        vumeter:stopSize="5dp"
+        vumeter:speed="10"
+        vumeter:blockNumber="5"
+        vumeter:blockSpacing="20dp"
+        vumeter:backgroundColor="#33b5e5"/>
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/enable_animation"
+        android:id="@+id/barNumberSwitch"
+        android:layout_below="@+id/vumeter"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="20dp"
+        tools:targetApi="ice_cream_sandwich"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/numberofbar"
+        android:id="@+id/textView"
+        android:layout_alignTop="@+id/numberSeekBar"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="8dp"/>
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/numberSeekBar"
+        android:layout_below="@+id/barNumberSwitch"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/textView"
+        android:progress="5"/>
 
 </RelativeLayout>

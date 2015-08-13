@@ -4,5 +4,6 @@
         <attr name="blockNumber" format="integer"/>
         <attr name="blockSpacing" format="dimension"/>
         <attr name="speed" format="integer"/>
+        <attr name="stopSize" format="dimension"/>
     </declare-styleable>
 </resources>

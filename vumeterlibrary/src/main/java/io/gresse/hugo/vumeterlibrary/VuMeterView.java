@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import java.util.Random;
@@ -24,15 +25,23 @@ public class VuMeterView extends View {
     public static final int DEFAULT_NUMBER_RANDOM_VALUES = 10;
     public static final int DEFAULT_BLOCK_SPACING = 20;
     public static final int DEFAULT_SPEED = 10;
+    public static final int DEFAULT_STOP_SIZE = 30;
     public static final int FPS = 60;
+
+    public static final int STATE_PAUSE = 0;
+    public static final int STATE_STOP = 1;
+    public static final int STATE_PLAYING = 2;
 
     private int mColor;
     private int mBlockNumber;
     private float mBlockSpacing;
     private int mSpeed;
+    private float mStopSize;
 
     private Paint mPaint = new Paint();
     private Random mRandom = new Random();
+
+    private int mState;
 
     // Draw field
     private int mBlockWidth;
@@ -47,7 +56,6 @@ public class VuMeterView extends View {
     private int mLeft;
     private int mTop;
     private int mRight;
-
     private float[][] mBlockValues;
     private Dynamics[] mDestinationValues;
 
@@ -73,17 +81,17 @@ public class VuMeterView extends View {
         mBlockNumber = a.getInt(R.styleable.VuMeterView_blockNumber, DEFAULT_NUMBER_BLOCK);
         mBlockSpacing = a.getDimension(R.styleable.VuMeterView_blockSpacing, DEFAULT_BLOCK_SPACING);
         mSpeed = a.getInt(R.styleable.VuMeterView_speed, DEFAULT_SPEED);
+        mStopSize = a.getDimension(R.styleable.VuMeterView_stopSize, DEFAULT_STOP_SIZE);
         a.recycle();
 
         // Init
-        mBlockValues = new float[mBlockNumber][DEFAULT_NUMBER_RANDOM_VALUES];
-        mDestinationValues = new Dynamics[mBlockNumber];
+        initialiseCollections();
         mPaint.setColor(mColor);
+        mState = STATE_PLAYING;
 
         mDrawPass = mBlockPass = mContentHeight = mContentWidth = mPaddingLeft = mPaddingTop = mLeft = mTop =
                 mPaddingRight = mPaddingBottom = mRight = 0;
 
-        updateRandomValues();
     }
 
     @Override
@@ -101,6 +109,7 @@ public class VuMeterView extends View {
             mBlockWidth = (int) ((mContentWidth - (mBlockNumber - 1) * mBlockSpacing) / mBlockNumber);
         }
 
+
         mBlockPass = 0;
         for (mBlockPass = 0; mBlockPass < mBlockNumber; mBlockPass++) {
 
@@ -115,9 +124,9 @@ public class VuMeterView extends View {
                 pickNewDynamics(mContentHeight, mContentHeight * mBlockValues[mBlockPass][mDrawPass]);
             }
 
-            if (mDestinationValues[mBlockPass].isAtRest()) {
-                changeDynamicsTarget(mContentHeight * mBlockValues[mBlockPass][mDrawPass]);
-            } else {
+            if (mDestinationValues[mBlockPass].isAtRest() && mState == STATE_PLAYING) {
+                changeDynamicsTarget(mBlockPass, mContentHeight * mBlockValues[mBlockPass][mDrawPass]);
+            } else if(mState != STATE_PAUSE){
                 mDestinationValues[mBlockPass].update();
             }
 
@@ -165,9 +174,9 @@ public class VuMeterView extends View {
      *
      * @param target the random values created in {@link #updateRandomValues()}
      */
-    private void changeDynamicsTarget(float target) {
+    private void changeDynamicsTarget(int block, float target) {
         incrementAndGetDrawPass();
-        mDestinationValues[mBlockPass].setTargetPosition(target);
+        mDestinationValues[block].setTargetPosition(target);
     }
 
     /**
@@ -181,6 +190,13 @@ public class VuMeterView extends View {
             mDrawPass = 0;
         }
         return mDrawPass;
+    }
+
+    private void initialiseCollections(){
+        mBlockValues = new float[mBlockNumber][DEFAULT_NUMBER_RANDOM_VALUES];
+        mDestinationValues = new Dynamics[mBlockNumber];
+
+        updateRandomValues();
     }
 
     /**
@@ -219,6 +235,9 @@ public class VuMeterView extends View {
     @SuppressWarnings("unused")
     public void setBlockNumber(int blockNumber) {
         mBlockNumber = blockNumber;
+        initialiseCollections();
+        mBlockPass = 0;
+        mBlockWidth = 0;
     }
 
     /**
@@ -239,6 +258,7 @@ public class VuMeterView extends View {
     @SuppressWarnings("unused")
     public void setBlockSpacing(float blockSpacing) {
         mBlockSpacing = blockSpacing;
+        mBlockWidth = 0;
     }
 
     /**
@@ -257,5 +277,53 @@ public class VuMeterView extends View {
      */
     public void setSpeed(int speed) {
         mSpeed = speed;
+    }
+
+    /**
+     * Pause the player.
+     *
+     * Call {@link #resume(boolean)} to replay the VuMeter
+     */
+    public void pause(){
+        mState = STATE_PAUSE;
+    }
+
+    /**
+     * Stop the VuMeterAnimation by going to the minimum values.
+     *
+     * @param withAnimation if you want to have an animation from current state to stop state
+     */
+    public void stop(boolean withAnimation){
+        mState = STATE_STOP;
+        int collapseSize = (int) (mContentHeight - mStopSize);
+        Log.d(LOG_TAG, "collapseSize: " + collapseSize);
+        for(int i = 0; i < mBlockNumber; i++){
+            if(withAnimation){
+                mDestinationValues[i].setTargetPosition(collapseSize);
+            } else {
+                mDestinationValues[i].setPosition(collapseSize);
+            }
+        }
+    }
+
+    /**
+     * Resume/play the VuMeter animation.
+     *
+     * @param withAnimation if you want to have transition from stop to resume state, set to true
+     */
+    public void resume(boolean withAnimation){
+        if(mState == STATE_PAUSE){
+            mState = STATE_PLAYING;
+            return;
+        }
+
+        mState = STATE_PLAYING;
+
+        if(!withAnimation){
+            for(int i = 0; i < mBlockNumber; i++){
+                mDestinationValues[i].setPosition(mContentHeight * mBlockValues[i][mDrawPass]);
+                changeDynamicsTarget(i, mContentHeight * mBlockValues[i][mDrawPass]);
+            }
+        }
     }
 }
