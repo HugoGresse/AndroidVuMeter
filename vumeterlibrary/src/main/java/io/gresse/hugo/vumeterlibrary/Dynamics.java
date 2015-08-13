@@ -1,7 +1,5 @@
 package io.gresse.hugo.vumeterlibrary;
 
-import android.util.Log;
-
 /**
  * Dynamics point
  * <p/>
@@ -29,9 +27,8 @@ public class Dynamics {
 
     private boolean mIsToTarget;
 
-    public Dynamics(int min, int max, float position) {
-        mStep = (max - min) / 50;
-        Log.d("toto", "" + mStep);
+    public Dynamics(int speed, float position) {
+        mStep = speed;
         mPosition = position;
         mIsToTarget = false;
     }

@@ -6,26 +6,30 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.Random;
 
 /**
- * TODO: document your custom view class.
+ * A (fake) VuMeterView.
+ *
+ * Created by Hugo Gresse on 13/08/2015
  */
 public class VuMeterView extends View {
 
+    @SuppressWarnings("unused")
     public static final String LOG_TAG = "VuMeterView";
 
-    public static final int DEFAULT_NUMBER_BLOCK = 5;
+    public static final int DEFAULT_NUMBER_BLOCK = 3;
     public static final int DEFAULT_NUMBER_RANDOM_VALUES = 10;
     public static final int DEFAULT_BLOCK_SPACING = 20;
+    public static final int DEFAULT_SPEED = 10;
     public static final int FPS = 60;
 
     private int mColor = Color.BLACK;
     private int mBlockNumber;
-    private int mBlockSpacing;
+    private float mBlockSpacing;
+    private int mSpeed;
 
     private Paint mPaint = new Paint();
     private Random mRandom = new Random();
@@ -40,8 +44,9 @@ public class VuMeterView extends View {
     private int mPaddingTop;
     private int mPaddingRight;
     private int mPaddingBottom;
-    private int mLeftBlock;
-    private int mTopBlock;
+    private int mLeft;
+    private int mTop;
+    private int mRight;
 
     private float[][] mBlockValues;
     private Dynamics[] mDestinationValues;
@@ -63,16 +68,11 @@ public class VuMeterView extends View {
 
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes
-        final TypedArray a = getContext().obtainStyledAttributes(
-                attrs, R.styleable.VuMeterView, defStyle, 0);
-
-        mColor = a.getColor(
-                R.styleable.VuMeterView_backgroundColor,
-                mColor);
-
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VuMeterView, defStyle, 0);
+        mColor = a.getColor(R.styleable.VuMeterView_backgroundColor, mColor);
         mBlockNumber = a.getInt(R.styleable.VuMeterView_blockNumber, DEFAULT_NUMBER_BLOCK);
-        mBlockSpacing = a.getInt(R.styleable.VuMeterView_blockSpacing, DEFAULT_BLOCK_SPACING);
-
+        mBlockSpacing = a.getDimension(R.styleable.VuMeterView_blockSpacing, DEFAULT_BLOCK_SPACING);
+        mSpeed = a.getInt(R.styleable.VuMeterView_speed, DEFAULT_SPEED);
         a.recycle();
 
         // Init
@@ -80,8 +80,8 @@ public class VuMeterView extends View {
         mDestinationValues = new Dynamics[mBlockNumber];
         mPaint.setColor(mColor);
 
-        mDrawPass = mBlockPass = mContentHeight = mContentWidth = mPaddingLeft = mPaddingTop = mLeftBlock = mTopBlock =
-                mPaddingRight = mPaddingBottom = 0;
+        mDrawPass = mBlockPass = mContentHeight = mContentWidth = mPaddingLeft = mPaddingTop = mLeft = mTop =
+                mPaddingRight = mPaddingBottom = mRight = 0;
 
         updateRandomValues();
     }
@@ -89,7 +89,6 @@ public class VuMeterView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
         mPaddingLeft = getPaddingLeft();
         mPaddingTop = getPaddingTop();
         mPaddingRight = getPaddingRight();
@@ -99,40 +98,35 @@ public class VuMeterView extends View {
         mContentHeight = getHeight() - mPaddingTop - mPaddingBottom;
 
         if (mBlockWidth == 0) {
-            mBlockWidth = mContentWidth / mBlockNumber - (mBlockNumber - 1) * mBlockSpacing;
+            mBlockWidth = (int) ((mContentWidth - (mBlockNumber-1) * mBlockSpacing) / mBlockNumber);
         }
 
-        mBlockPass = mLeftBlock = 0;
+        mBlockPass = 0;
         for (mBlockPass = 0; mBlockPass < mBlockNumber; mBlockPass++) {
-            mLeftBlock = mBlockPass * mBlockWidth;
-            if(mBlockPass > 0){
-                mLeftBlock += mBlockSpacing;
-            }
 
+            mLeft = mPaddingLeft + mBlockPass * mBlockWidth;
+
+            // Add spacing between blocks
+            mLeft += mBlockSpacing * mBlockPass;
+
+            mRight = mLeft + mBlockWidth;
 
             if(mDestinationValues[mBlockPass] == null){
-                pickNewDynamics(0, mContentHeight, mContentHeight * mBlockValues[mBlockPass][mDrawPass]);
+                pickNewDynamics(mContentHeight, mContentHeight * mBlockValues[mBlockPass][mDrawPass]);
             }
 
             if (mDestinationValues[mBlockPass].isAtRest()) {
-                Log.d(LOG_TAG, "isAtResty");
                 changeDynamicsTarget(mContentHeight * mBlockValues[mBlockPass][mDrawPass]);
-//                needNewFrame = true;
             } else {
-
                 mDestinationValues[mBlockPass].update();
             }
 
-
-            mTopBlock = (int) (mDestinationValues[mBlockPass].getPosition());
-
-//            mTopBlock = (int) (mBlockValues[mBlockPass][mDrawPass] * mContentHeight);
-
+            mTop = mPaddingTop + (int) (mDestinationValues[mBlockPass].getPosition());
 
             canvas.drawRect(
-                    mLeftBlock,
-                    mTopBlock,
-                    mBlockWidth + mBlockPass * mBlockWidth,
+                    mLeft,
+                    mTop,
+                    mRight,
                     mContentHeight,
                     mPaint);
         }
@@ -140,6 +134,9 @@ public class VuMeterView extends View {
         this.postInvalidateDelayed(1000 / FPS);
     }
 
+    /**
+     * Create random values to be picked when creating a new Dynamics
+     */
     private void updateRandomValues(){
         for(int i = 0; i < mBlockNumber; i++){
             for(int j = 0; j < DEFAULT_NUMBER_RANDOM_VALUES; j++){
@@ -148,29 +145,35 @@ public class VuMeterView extends View {
                     mBlockValues[i][j] = 0.1f;
                 }
             }
-
-//            mDestinationValues[i] = new Dynamics(70f, 0.30f);
-//
-//            mDestinationValues[i].setPosition(mBlockValues[i][0], System.currentTimeMillis());
-//            mDestinationValues[i].setTargetPosition(mBlockValues[i][1], System.currentTimeMillis());
         }
     }
 
-    private void pickNewDynamics(int min, int max, float position){
-        Log.d(LOG_TAG, "pick new Dynamics");
-        mDestinationValues[mBlockPass] = new Dynamics(min, max, position);
+    /**
+     * Create a new Dynamics to be used as first destination
+     *
+     * @param max max height
+     * @param position the current block position
+     */
+    private void pickNewDynamics(int max, float position){
+        mDestinationValues[mBlockPass] = new Dynamics(mSpeed, position);
         incrementAndGetDrawPass();
         mDestinationValues[mBlockPass].setTargetPosition(max * mBlockValues[mBlockPass][mDrawPass]);
-//        mDestinationValues[block] = new Dynamics(70f, 0.30f);
     }
 
+    /**
+     * Update current dynamics to a new destination point
+     * @param target the random values created in {@link #updateRandomValues()}
+     */
     private void changeDynamicsTarget(float target){
         incrementAndGetDrawPass();
         mDestinationValues[mBlockPass].setTargetPosition(target);
-
-
     }
 
+    /**
+     * Increment the drawPass. Used to pick a value in arrays
+     *
+     * @return the DrawPass
+     */
     private int incrementAndGetDrawPass(){
         mDrawPass ++;
         if(mDrawPass >= DEFAULT_NUMBER_RANDOM_VALUES){
@@ -224,17 +227,17 @@ public class VuMeterView extends View {
      * @return Spacing value, in px
      */
     @SuppressWarnings("unused")
-    public int getBlockSpacing() {
+    public float getBlockSpacing() {
         return mBlockSpacing;
     }
 
     /**
      * Set the spacing between each block
      *
-     * @param blockSpacing Px space between block
+     * @param blockSpacing dp space between block
      */
     @SuppressWarnings("unused")
-    public void setBlockSpacing(int blockSpacing) {
+    public void setBlockSpacing(float blockSpacing) {
         mBlockSpacing = blockSpacing;
     }
 }

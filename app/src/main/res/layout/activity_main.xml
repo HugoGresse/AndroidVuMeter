@@ -13,7 +13,12 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
         android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:paddingBottom="40dp"
+        android:background="@android:color/holo_red_dark"
+        app:speed="10"
+        app:blockNumber="5"
+        app:blockSpacing="20dp"
         app:backgroundColor="#33b5e5"/>
 
 </RelativeLayout>
