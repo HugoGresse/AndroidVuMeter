@@ -12,7 +12,7 @@ import java.util.Random;
 
 /**
  * A (fake) VuMeterView.
- *
+ * <p/>
  * Created by Hugo Gresse on 13/08/2015
  */
 public class VuMeterView extends View {
@@ -26,7 +26,7 @@ public class VuMeterView extends View {
     public static final int DEFAULT_SPEED = 10;
     public static final int FPS = 60;
 
-    private int mColor = Color.BLACK;
+    private int mColor;
     private int mBlockNumber;
     private float mBlockSpacing;
     private int mSpeed;
@@ -69,7 +69,7 @@ public class VuMeterView extends View {
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes
         final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VuMeterView, defStyle, 0);
-        mColor = a.getColor(R.styleable.VuMeterView_backgroundColor, mColor);
+        mColor = a.getColor(R.styleable.VuMeterView_backgroundColor, Color.BLACK);
         mBlockNumber = a.getInt(R.styleable.VuMeterView_blockNumber, DEFAULT_NUMBER_BLOCK);
         mBlockSpacing = a.getDimension(R.styleable.VuMeterView_blockSpacing, DEFAULT_BLOCK_SPACING);
         mSpeed = a.getInt(R.styleable.VuMeterView_speed, DEFAULT_SPEED);
@@ -98,7 +98,7 @@ public class VuMeterView extends View {
         mContentHeight = getHeight() - mPaddingTop - mPaddingBottom;
 
         if (mBlockWidth == 0) {
-            mBlockWidth = (int) ((mContentWidth - (mBlockNumber-1) * mBlockSpacing) / mBlockNumber);
+            mBlockWidth = (int) ((mContentWidth - (mBlockNumber - 1) * mBlockSpacing) / mBlockNumber);
         }
 
         mBlockPass = 0;
@@ -111,7 +111,7 @@ public class VuMeterView extends View {
 
             mRight = mLeft + mBlockWidth;
 
-            if(mDestinationValues[mBlockPass] == null){
+            if (mDestinationValues[mBlockPass] == null) {
                 pickNewDynamics(mContentHeight, mContentHeight * mBlockValues[mBlockPass][mDrawPass]);
             }
 
@@ -137,11 +137,11 @@ public class VuMeterView extends View {
     /**
      * Create random values to be picked when creating a new Dynamics
      */
-    private void updateRandomValues(){
-        for(int i = 0; i < mBlockNumber; i++){
-            for(int j = 0; j < DEFAULT_NUMBER_RANDOM_VALUES; j++){
+    private void updateRandomValues() {
+        for (int i = 0; i < mBlockNumber; i++) {
+            for (int j = 0; j < DEFAULT_NUMBER_RANDOM_VALUES; j++) {
                 mBlockValues[i][j] = mRandom.nextFloat();
-                if(mBlockValues[i][j] < 0.1){
+                if (mBlockValues[i][j] < 0.1) {
                     mBlockValues[i][j] = 0.1f;
                 }
             }
@@ -151,10 +151,10 @@ public class VuMeterView extends View {
     /**
      * Create a new Dynamics to be used as first destination
      *
-     * @param max max height
+     * @param max      max height
      * @param position the current block position
      */
-    private void pickNewDynamics(int max, float position){
+    private void pickNewDynamics(int max, float position) {
         mDestinationValues[mBlockPass] = new Dynamics(mSpeed, position);
         incrementAndGetDrawPass();
         mDestinationValues[mBlockPass].setTargetPosition(max * mBlockValues[mBlockPass][mDrawPass]);
@@ -162,9 +162,10 @@ public class VuMeterView extends View {
 
     /**
      * Update current dynamics to a new destination point
+     *
      * @param target the random values created in {@link #updateRandomValues()}
      */
-    private void changeDynamicsTarget(float target){
+    private void changeDynamicsTarget(float target) {
         incrementAndGetDrawPass();
         mDestinationValues[mBlockPass].setTargetPosition(target);
     }
@@ -174,26 +175,25 @@ public class VuMeterView extends View {
      *
      * @return the DrawPass
      */
-    private int incrementAndGetDrawPass(){
-        mDrawPass ++;
-        if(mDrawPass >= DEFAULT_NUMBER_RANDOM_VALUES){
+    private int incrementAndGetDrawPass() {
+        mDrawPass++;
+        if (mDrawPass >= DEFAULT_NUMBER_RANDOM_VALUES) {
             mDrawPass = 0;
         }
         return mDrawPass;
     }
 
     /**
-     * Gets the example color attribute value.
+     * Gets the color of the VuMeter
      *
-     * @return The example color attribute value.
+     * @return The color value.
      */
     public int getColor() {
         return mColor;
     }
 
     /**
-     * Sets the view's example color attribute value. In the example view, this color
-     * is the font color.
+     * Sets the VuMeter color value.
      *
      * @param color The example color attribute value to use.
      */
@@ -239,5 +239,23 @@ public class VuMeterView extends View {
     @SuppressWarnings("unused")
     public void setBlockSpacing(float blockSpacing) {
         mBlockSpacing = blockSpacing;
+    }
+
+    /**
+     * Get the current animation speed
+     *
+     * @return the speed
+     */
+    public int getSpeed() {
+        return mSpeed;
+    }
+
+    /**
+     * Set the current animation speed
+     *
+     * @param speed The desired speed value
+     */
+    public void setSpeed(int speed) {
+        mSpeed = speed;
     }
 }
