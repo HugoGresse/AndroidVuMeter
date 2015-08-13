@@ -1,16 +1,55 @@
 package io.gresse.hugo.vumeter;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
+import android.widget.SeekBar;
+import android.widget.Switch;
+
+import io.gresse.hugo.vumeterlibrary.VuMeterView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private VuMeterView mVuMeterView;
+
+    private SeekBar mBarNumberSeekBar;
+    private Switch mAnimationSwitch;
+
+    private boolean mEnableAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mVuMeterView = (VuMeterView) findViewById(R.id.vumeter);
+        mBarNumberSeekBar = (SeekBar) findViewById(R.id.numberSeekBar);
+        mAnimationSwitch = (Switch) findViewById(R.id.barNumberSwitch);
+
+
+        mBarNumberSeekBar.incrementProgressBy(1);
+        mBarNumberSeekBar.setMax(10);
+
+        mBarNumberSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mVuMeterView.setBlockNumber(progress +1);
+            }
+        });
+
+        mAnimationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mEnableAnimation = isChecked;
+            }
+        });
     }
 
     @Override
@@ -27,9 +66,16 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_stop:
+                mVuMeterView.stop(mEnableAnimation);
+                return true;
+            case R.id.action_resume:
+                mVuMeterView.resume(mEnableAnimation);
+                return true;
+            case R.id.action_pause:
+                mVuMeterView.pause();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

@@ -1,4 +1,8 @@
+import java.util.regex.Pattern
+
 apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
 android {
     compileSdkVersion 22
@@ -7,8 +11,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
+        versionCode 9
+        versionName "1.0.8"
     }
     buildTypes {
         release {
@@ -21,4 +25,102 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:22.2.1'
+}
+
+///////////////////////////////////////////
+// Bintray and jCenter upload configuration
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+version = android.defaultConfig.versionName
+group = 'io.gresse.hugo.vumeterlibrary'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+
+            pom.project {
+
+                packaging 'aar'
+                url 'https://github.com/HugoGresse/AndroidVuMeter'
+
+                developers {
+                    developer {
+                        id 'hugogresse'
+                        name 'Hugo Gresse'
+                        email 'hugo.gresse@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key =  properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = 'AndroidVuMeter'
+        name = 'AndroidVuMeter'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'git@github.com:HugoGresse/AndroidVuMeter.git'
+        websiteUrl = 'https://github.com/HugoGresse/AndroidVuMeter'
+        publish = true
+        //noinspection GroovyAssignabilityCheck
+        version {
+            name = android.defaultConfig.versionName
+        }
+    }
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    failOnError false
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+}
+
+
+////////////////////////////////
+// Auto update minor version number
+
+task incrementVersionCode << {
+    println("Incrementing Version Code...")
+    def manifestFile = file("build.gradle")
+    def patternVersionCode = Pattern.compile("versionCode (\\d+)")
+    def manifestText = manifestFile.getText()
+    def matcherVersionCode = patternVersionCode.matcher(manifestText)
+    matcherVersionCode.find()
+    def mVersionCode = Integer.parseInt(matcherVersionCode.group(1))
+    def mNextVersionCode = mVersionCode + 1
+    def manifestContent = matcherVersionCode.replaceAll("versionCode " + mNextVersionCode)
+    println("> Set versionCode(" + mVersionCode + ") to " + mNextVersionCode);
+    manifestFile.write(manifestContent)
+}
+
+task incrementVersionName << {
+    println("Incrementing Version Name...")
+    def manifestFile = file("build.gradle")
+    def patternVersionNumber = Pattern.compile("versionName \"(\\d+)\\.(\\d+)\\.(\\d+)\"")
+    def manifestText = manifestFile.getText()
+    def matcherVersionNumber = patternVersionNumber.matcher(manifestText)
+    matcherVersionNumber.find()
+    def majorVersion = Integer.parseInt(matcherVersionNumber.group(1))
+    def minorVersion = Integer.parseInt(matcherVersionNumber.group(2))
+    def pointVersion = Integer.parseInt(matcherVersionNumber.group(3))
+    def mVersionName = majorVersion + "." + minorVersion + "." + pointVersion
+    def mNextVersionName = majorVersion + "." + minorVersion + "." + (pointVersion + 1)
+    def manifestContent = matcherVersionNumber.replaceAll("versionName \"" + mNextVersionName + "\"")
+    println("> Set versionName(" + mVersionName + ") to " + mNextVersionName);
+    manifestFile.write(manifestContent)
 }
