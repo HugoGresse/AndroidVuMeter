@@ -5,5 +5,6 @@
         <attr name="blockSpacing" format="dimension"/>
         <attr name="speed" format="integer"/>
         <attr name="stopSize" format="dimension"/>
+        <attr name="startOff" format="boolean"/>
     </declare-styleable>
 </resources>
