@@ -68,6 +68,10 @@ public class Dynamics {
         return mIsToTarget;
     }
 
+    public void setAtRest(boolean atRest){
+        mIsToTarget = atRest;
+    }
+
     public float getPosition() {
         return mPosition;
     }

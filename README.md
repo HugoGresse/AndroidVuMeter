@@ -28,7 +28,8 @@ Usage
         vumeter:speed="10"
         vumeter:blockNumber="5"
         vumeter:blockSpacing="20dp"
-        vumeter:backgroundColor="#33b5e5"/>
+        vumeter:backgroundColor="#33b5e5"
+        vumeter:startOff="false"/>
 ```
 
 See [DemoApp](https://github.com/HugoGresse/AndroidVuMeter/blob/master/app/src/main/java/io/gresse/hugo/vumeter/MainActivity.java) for complete usage example.
@@ -40,7 +41,7 @@ Download
 
 Using Gradle:
 ```
-compile 'io.gresse.hugo.vumeterlibrary:vumeterlibrary:1.0.9'
+compile 'io.gresse.hugo.vumeterlibrary:vumeterlibrary:1.0.10'
 ```
 
 *Hosted on jCenter only.* 

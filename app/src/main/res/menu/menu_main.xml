@@ -7,17 +7,18 @@
         android:id="@+id/action_stop"
         android:orderInCategory="100"
         android:title="@string/action_stop"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction"/>
 
     <item
         android:id="@+id/action_resume"
         android:orderInCategory="100"
         android:title="@string/action_resume"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_pause"
         android:orderInCategory="100"
         android:title="@string/action_pause"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
 </menu>
