@@ -311,6 +311,9 @@ public class VuMeterView extends View {
      * @param withAnimation if you want to have an animation from current state to stop state
      */
     public void stop(boolean withAnimation){
+        if(mDestinationValues == null){
+            initialiseCollections();
+        }
         mState = STATE_STOP;
         int collapseSize = (int) (mContentHeight - mStopSize);
         for(int i = 0; i < mBlockNumber; i++){
