@@ -323,6 +323,9 @@ public class VuMeterView extends View {
         }
 
         for(int i = 0; i < mBlockNumber; i++){
+            if(mDestinationValues[i] == null){
+                continue;
+            }
             if(withAnimation){
                 mDestinationValues[i].setTargetPosition(collapseSize);
             } else {
