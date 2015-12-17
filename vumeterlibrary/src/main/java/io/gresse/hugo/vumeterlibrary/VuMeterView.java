@@ -316,6 +316,12 @@ public class VuMeterView extends View {
         }
         mState = STATE_STOP;
         int collapseSize = (int) (mContentHeight - mStopSize);
+
+        // Prevent NPE in the destinations table is empty
+        if(mDestinationValues.length <= 0){
+            return;
+        }
+
         for(int i = 0; i < mBlockNumber; i++){
             if(withAnimation){
                 mDestinationValues[i].setTargetPosition(collapseSize);
