@@ -32,7 +32,7 @@ Usage
         vumeter:startOff="false"/>
 ```
 
-Don't forget to add the namespace to the the `vumeter` attribute on your root view: 
+Don't forget to add the namespace fo the the `vumeter` attribute on your root view: 
 ```xml
 xmlns:vumeter="http://schemas.android.com/apk/res-auto"
 ```
