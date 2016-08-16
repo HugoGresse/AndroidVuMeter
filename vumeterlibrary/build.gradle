@@ -5,14 +5,16 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0"
+
+    resourcePrefix "vumeter_"
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 23
-        versionCode 15
-        versionName "1.0.14"
+        versionCode 16
+        versionName "1.0.15"
+        targetSdkVersion 24
     }
     buildTypes {
         release {
@@ -24,7 +26,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:appcompat-v7:24.0.0'
 }
 
 ///////////////////////////////////////////

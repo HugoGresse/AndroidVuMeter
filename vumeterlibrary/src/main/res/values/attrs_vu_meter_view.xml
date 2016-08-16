@@ -1,10 +1,10 @@
 <resources>
-    <declare-styleable name="VuMeterView">
-        <attr name="backgroundColor" format="color"/>
-        <attr name="blockNumber" format="integer"/>
-        <attr name="blockSpacing" format="dimension"/>
-        <attr name="speed" format="integer"/>
-        <attr name="stopSize" format="dimension"/>
-        <attr name="startOff" format="boolean"/>
+    <declare-styleable name="vumeter_VuMeterView">
+        <attr name="vumeter_backgroundColor" format="color"/>
+        <attr name="vumeter_blockNumber" format="integer"/>
+        <attr name="vumeter_blockSpacing" format="dimension"/>
+        <attr name="vumeter_speed" format="integer"/>
+        <attr name="vumeter_stopSize" format="dimension"/>
+        <attr name="vumeter_startOff" format="boolean"/>
     </declare-styleable>
 </resources>
