@@ -1,12 +1,12 @@
 package io.gresse.hugo.vumeterlibrary;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.Random;
@@ -26,6 +26,7 @@ public class VuMeterView extends View {
     public static final int DEFAULT_BLOCK_SPACING = 20;
     public static final int DEFAULT_SPEED = 10;
     public static final int DEFAULT_STOP_SIZE = 30;
+    public static final boolean DEFAULT_START_OFF = false;
     public static final int FPS = 60;
 
     public static final int STATE_PAUSE = 0;
@@ -76,24 +77,31 @@ public class VuMeterView extends View {
 
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes
-        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VuMeterView, defStyle, 0);
-        mColor = a.getColor(R.styleable.VuMeterView_backgroundColor, Color.BLACK);
-        mBlockNumber = a.getInt(R.styleable.VuMeterView_blockNumber, DEFAULT_NUMBER_BLOCK);
-        mBlockSpacing = a.getDimension(R.styleable.VuMeterView_blockSpacing, DEFAULT_BLOCK_SPACING);
-        mSpeed = a.getInt(R.styleable.VuMeterView_speed, DEFAULT_SPEED);
-        mStopSize = a.getDimension(R.styleable.VuMeterView_stopSize, DEFAULT_STOP_SIZE);
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.vumeter_VuMeterView, defStyle, 0);
+        mColor = a.getColor(R.styleable.vumeter_VuMeterView_vumeter_backgroundColor, Color.BLACK);
+        mBlockNumber = a.getInt(R.styleable.vumeter_VuMeterView_vumeter_blockNumber, DEFAULT_NUMBER_BLOCK);
+        mBlockSpacing = a.getDimension(R.styleable.vumeter_VuMeterView_vumeter_blockSpacing, DEFAULT_BLOCK_SPACING);
+        mSpeed = a.getInt(R.styleable.vumeter_VuMeterView_vumeter_speed, DEFAULT_SPEED);
+        mStopSize = a.getDimension(R.styleable.vumeter_VuMeterView_vumeter_stopSize, DEFAULT_STOP_SIZE);
+        boolean startOff = a.getBoolean(R.styleable.vumeter_VuMeterView_vumeter_startOff, DEFAULT_START_OFF);
         a.recycle();
 
         // Init
         initialiseCollections();
         mPaint.setColor(mColor);
-        mState = STATE_PLAYING;
+
+        if(startOff){
+            mState = STATE_PAUSE;
+        } else {
+            mState = STATE_PLAYING;
+        }
 
         mDrawPass = mBlockPass = mContentHeight = mContentWidth = mPaddingLeft = mPaddingTop = mLeft = mTop =
                 mPaddingRight = mPaddingBottom = mRight = 0;
 
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -107,6 +115,15 @@ public class VuMeterView extends View {
 
         if (mBlockWidth == 0) {
             mBlockWidth = (int) ((mContentWidth - (mBlockNumber - 1) * mBlockSpacing) / mBlockNumber);
+
+            // called if startOff is true
+            if(mState == STATE_PAUSE){
+                int stopSize = (int) (mContentHeight - mStopSize);
+                for (int i = 0; i < mBlockNumber; i++) {
+                    mDestinationValues[i] = new Dynamics(mSpeed, stopSize);
+                    mDestinationValues[i].setAtRest(true);
+                }
+            }
         }
 
 
@@ -294,10 +311,21 @@ public class VuMeterView extends View {
      * @param withAnimation if you want to have an animation from current state to stop state
      */
     public void stop(boolean withAnimation){
+        if(mDestinationValues == null){
+            initialiseCollections();
+        }
         mState = STATE_STOP;
         int collapseSize = (int) (mContentHeight - mStopSize);
-        Log.d(LOG_TAG, "collapseSize: " + collapseSize);
+
+        // Prevent NPE in the destinations table is empty
+        if(mDestinationValues.length <= 0){
+            return;
+        }
+
         for(int i = 0; i < mBlockNumber; i++){
+            if(mDestinationValues[i] == null){
+                continue;
+            }
             if(withAnimation){
                 mDestinationValues[i].setTargetPosition(collapseSize);
             } else {

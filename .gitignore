@@ -5,3 +5,7 @@
 .DS_Store
 /build
 /captures
+
+vumeterlibrary/vumeterlibrary.iml
+app/app.iml
+app/*.apk
