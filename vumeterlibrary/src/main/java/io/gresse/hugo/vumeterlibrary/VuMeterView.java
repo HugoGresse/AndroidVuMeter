@@ -77,13 +77,13 @@ public class VuMeterView extends View {
 
     private void init(AttributeSet attrs, int defStyle) {
         // Load attributes
-        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.VuMeterView, defStyle, 0);
-        mColor = a.getColor(R.styleable.VuMeterView_backgroundColor, Color.BLACK);
-        mBlockNumber = a.getInt(R.styleable.VuMeterView_blockNumber, DEFAULT_NUMBER_BLOCK);
-        mBlockSpacing = a.getDimension(R.styleable.VuMeterView_blockSpacing, DEFAULT_BLOCK_SPACING);
-        mSpeed = a.getInt(R.styleable.VuMeterView_speed, DEFAULT_SPEED);
-        mStopSize = a.getDimension(R.styleable.VuMeterView_stopSize, DEFAULT_STOP_SIZE);
-        boolean startOff = a.getBoolean(R.styleable.VuMeterView_startOff, DEFAULT_START_OFF);
+        final TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.vumeter_VuMeterView, defStyle, 0);
+        mColor = a.getColor(R.styleable.vumeter_VuMeterView_vumeter_backgroundColor, Color.BLACK);
+        mBlockNumber = a.getInt(R.styleable.vumeter_VuMeterView_vumeter_blockNumber, DEFAULT_NUMBER_BLOCK);
+        mBlockSpacing = a.getDimension(R.styleable.vumeter_VuMeterView_vumeter_blockSpacing, DEFAULT_BLOCK_SPACING);
+        mSpeed = a.getInt(R.styleable.vumeter_VuMeterView_vumeter_speed, DEFAULT_SPEED);
+        mStopSize = a.getDimension(R.styleable.vumeter_VuMeterView_vumeter_stopSize, DEFAULT_STOP_SIZE);
+        boolean startOff = a.getBoolean(R.styleable.vumeter_VuMeterView_vumeter_startOff, DEFAULT_START_OFF);
         a.recycle();
 
         // Init
