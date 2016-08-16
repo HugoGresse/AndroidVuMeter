@@ -24,12 +24,12 @@ Usage
         android:paddingRight="20dp"
         android:paddingBottom="40dp"
         android:id="@+id/vumeter"
-        vumeter:stopSize="5dp"
-        vumeter:speed="10"
-        vumeter:blockNumber="5"
-        vumeter:blockSpacing="20dp"
-        vumeter:backgroundColor="#33b5e5"
-        vumeter:startOff="false"/>
+        vumeter:vumeter_stopSize="5dp"
+        vumeter:vumeter_speed="10"
+        vumeter:vumeter_blockNumber="5"
+        vumeter:vumeter_blockSpacing="20dp"
+        vumeter:vumeter_backgroundColor="#33b5e5"
+        vumeter:vumeter_startOff="false"/>
 ```
 
 See [DemoApp](https://github.com/HugoGresse/AndroidVuMeter/blob/master/app/src/main/java/io/gresse/hugo/vumeter/MainActivity.java) for complete usage example.
