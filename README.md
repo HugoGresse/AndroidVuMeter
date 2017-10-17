@@ -32,6 +32,11 @@ Usage
         vumeter:vumeter_startOff="false"/>
 ```
 
+Don't forget to add the namespace fo the the `vumeter` attribute on your root view: 
+```xml
+xmlns:vumeter="http://schemas.android.com/apk/res-auto"
+```
+
 See [DemoApp](https://github.com/HugoGresse/AndroidVuMeter/blob/master/app/src/main/java/io/gresse/hugo/vumeter/MainActivity.java) for complete usage example.
 
 See [wiki](https://github.com/HugoGresse/AndroidVuMeter/wiki) for the available methods. 
@@ -41,7 +46,7 @@ Download
 
 Using Gradle:
 ```
-compile 'io.gresse.hugo.vumeterlibrary:vumeterlibrary:1.0.10'
+compile 'io.gresse.hugo.vumeterlibrary:vumeterlibrary:1.0.15'
 ```
 
 *Hosted on jCenter only.* 

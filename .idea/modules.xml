@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/VUMeter.iml" filepath="$PROJECT_DIR$/VUMeter.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/vumeterlibrary/vumeterlibrary.iml" filepath="$PROJECT_DIR$/vumeterlibrary/vumeterlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/vumeterlibrary/vumeterlibrary.iml" filepath="$PROJECT_DIR$/vumeterlibrary/vumeterlibrary.iml" />
     </modules>
   </component>
