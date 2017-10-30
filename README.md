@@ -4,6 +4,10 @@ A simple fake **VuMeter** (or equalizer) for Android that contain only two class
 
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Android%20VuMeter-green.svg?style=flat)](https://android-arsenal.com/details/1/2344)
 
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/GLNEizAHyYif3D2Sb46Vfx1q/HugoGresse/AndroidVuMeter'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/GLNEizAHyYif3D2Sb46Vfx1q/HugoGresse/AndroidVuMeter.svg' />
+</a>
+
 Features
 --------
 
