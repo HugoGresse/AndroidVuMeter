@@ -232,6 +232,7 @@ public class VuMeterView extends View {
      */
     public void setColor(int color) {
         mColor = color;
+        mPaint.setColor(mColor);
     }
 
     /**
