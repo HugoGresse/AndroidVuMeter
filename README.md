@@ -48,7 +48,7 @@ Download
 
 Using Gradle:
 ```
-compile 'io.gresse.hugo.vumeterlibrary:vumeterlibrary:1.0.16'
+compile 'io.gresse.hugo.vumeterlibrary:vumeterlibrary:1.0.17'
 ```
 
 *Hosted on jCenter only.* 
